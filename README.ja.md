@@ -7,6 +7,8 @@
 
 **[Sansan](https://www.sansan.com/) と連携する Model Context Protocol サーバーです。** Claude / Cursor / Claude Code / Cline / Continue など、MCP に対応する任意のクライアントから、名刺 / 人物 / タグ / 営業活動報告 / ユーザー / 部署を操作できます。
 
+**14 ツール** (アクション)、**6 リソース** (`sansan://` URI で直接コンテキスト取り込み)、**5 プロンプト** (営業ワークフローのスラッシュコマンド) を提供します。
+
 > The English README is at [README.md](README.md).
 
 ---
@@ -83,6 +85,39 @@ claude mcp add sansan -e SANSAN_API_KEY=your-key -- npx -y sansan-mcp
 | `list_organization_departments` | 部署階層 (CSV) |
 
 すべて構造化された JSON を返します。画像と CSV エンドポイントはメタデータ付きで生のペイロードを返します。
+
+---
+
+## リソース
+
+リソースは `sansan://` URI で Sansan のデータを公開します。Claude Desktop / Code では `@` メンションで直接参照でき、ツール呼び出し無しでコンテキストに取り込めます。
+
+| URI | Mime | 説明 |
+|-----|------|------|
+| `sansan://bizcard/{id}` | `application/json` | 名刺 1 件 (タグ付き) |
+| `sansan://bizcard/{id}/image` | `image/jpeg` | 名刺の表面画像 (base64) |
+| `sansan://person/{id}` | `application/json` | 人物レコード (複数名刺を統合) |
+| `sansan://tags` | `application/json` | アクセス可能なタグ一覧 |
+| `sansan://users` | `text/csv` | ユーザー一覧 |
+| `sansan://departments` | `text/csv` | 部署階層 |
+
+例: 「`@sansan://bizcard/abc123` この人に丁寧な日本語でフォローアップメールを書いて」
+
+---
+
+## プロンプト
+
+プロンプトは営業ワークフローの再利用可能テンプレートです。対応クライアントではスラッシュコマンドとして表示されます。
+
+| プロンプト | 機能 |
+|-----------|------|
+| `/weekly_sales_recap` | 今週の営業活動を会社別・種別にまとめた要約とフォローアップ提案 |
+| `/find_warm_contacts` | 指定会社内の連絡先を最終接触日と接触頻度でランク付け |
+| `/analyze_contact` | 名刺 1 件の構造化分析 (適合度 / 案件可能性 / 関係性) |
+| `/draft_followup_email` | 日本語敬語または英語ビジネスでフォローアップメールを下書き |
+| `/meeting_recap_to_report` | 議事録 → `create_report` ツールに渡せる構造化ペイロードに変換 |
+
+各プロンプトは `bizcard_id` / `language` / `tone` などの構造化引数を取り、クライアントが入力フィールドとして表示します。
 
 ---
 

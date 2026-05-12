@@ -1,7 +1,7 @@
 {
   "name": "sansan-mcp",
-  "version": "0.1.0",
-  "description": "Model Context Protocol server for Sansan (sansan.com) — business cards, persons, reports, and contacts from Claude or any MCP client.",
+  "version": "0.2.0",
+  "description": "Model Context Protocol server for Sansan (sansan.com): 14 tools, 6 resources, and 5 sales-workflow prompts. Works with Claude, Cursor, Cline, and any MCP client.",
   "license": "MIT",
   "author": "Sewon Kim <sewon@supernova-tokyo.jp>",
   "repository": {

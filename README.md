@@ -7,6 +7,8 @@
 
 **A Model Context Protocol server for [Sansan](https://www.sansan.com/), Japan's largest business card / contact management platform (60,000+ companies).** Brings Sansan's business cards, persons, tags, sales activity reports, users, and departments into Claude, Cursor, Claude Code, Cline, Continue, or any MCP-compatible client.
 
+**14 tools** for actions, **6 resources** for direct context loading via `sansan://` URIs, **5 prompts** for sales-workflow slash commands.
+
 > 日本語版の README は [README.ja.md](README.ja.md) にあります。
 
 ---
@@ -83,6 +85,39 @@ claude mcp add sansan -e SANSAN_API_KEY=your-key -- npx -y sansan-mcp
 | `list_organization_departments` | Download the full department hierarchy as CSV. |
 
 All tools return structured JSON. Image and CSV endpoints return raw payloads wrapped with metadata.
+
+---
+
+## Resources
+
+Resources expose Sansan data via stable `sansan://` URIs. In Claude Desktop / Code, you can reference them directly with `@` mentions — the client pulls the resource into context without explicitly calling a tool.
+
+| URI | Mime | Description |
+|-----|------|-------------|
+| `sansan://bizcard/{id}` | `application/json` | Full business card (with tags). |
+| `sansan://bizcard/{id}/image` | `image/jpeg` | Front-side card image (base64 blob). |
+| `sansan://person/{id}` | `application/json` | Consolidated person record across cards. |
+| `sansan://tags` | `application/json` | All tags visible to the API key. |
+| `sansan://users` | `text/csv` | Tenant user roster. |
+| `sansan://departments` | `text/csv` | Department hierarchy. |
+
+Example prompt: *"@sansan://bizcard/abc123 — draft a follow-up email to this contact in Japanese keigo."*
+
+---
+
+## Prompts
+
+Prompts are pre-built sales-workflow templates. In compatible clients they appear as slash commands.
+
+| Prompt | What it does |
+|--------|--------------|
+| `/weekly_sales_recap` | Weekly recap of Sansan activity, grouped by company and type, with follow-up suggestions. |
+| `/find_warm_contacts` | Rank contacts at a target company by recency and engagement signals. |
+| `/analyze_contact` | Structured analysis of a single contact (fit, deal potential, or relationship health). |
+| `/draft_followup_email` | Draft a context-aware follow-up email in JP keigo or business EN. |
+| `/meeting_recap_to_report` | Convert a meeting transcript into a confirm-and-send `create_report` payload. |
+
+Each prompt takes structured arguments (e.g. `bizcard_id`, `language`, `tone`) that the client surfaces as fields.
 
 ---
 
